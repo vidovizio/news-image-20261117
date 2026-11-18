@@ -91,19 +91,57 @@ def main():
     draw.text((lx + 22, ly + 57), "KERCH BRIDGE HIT", font=lead_f, fill=INK)
 
     # Bridge illustration
-    cy = ly + 185
-    draw.rectangle((lx + 28, cy + 66, lx + lw - 28, cy + 78), fill=INK)
-    draw.rectangle((lx + 28, cy + 78, lx + lw - 28, cy + 86), fill=INK)
-    for x in (lx + 58, lx + 178, lx + 298, lx + 418, lx + 538):
-        draw.rectangle((x, cy - 18, x + 10, cy + 66), fill=INK)
-        draw.line((x + 5, cy - 18, lx + 290, cy - 70), fill=INK, width=4)
-    draw.polygon([(lx + 258, cy - 14), (lx + 290, cy + 8), (lx + 322, cy - 14),
-                  (lx + 342, cy + 14), (lx + 306, cy + 66),
-                  (lx + 274, cy + 66)], fill=PAPER)
-    draw.polygon([(lx + 270, cy + 66), (lx + 306, cy + 66),
-                  (lx + 344, cy + 112), (lx + 322, cy + 112)], fill=RED)
-    draw.text((lx + 35, cy - 75), "BLACK SEA", font=font(BOLD, 17), fill=BLUE)
-    draw.text((lx + lw - 150, cy - 75), "CRIMEA", font=font(BOLD, 17), fill=BLUE)
+    deck_y = ly + 222
+    tower_top = ly + 137
+    left_tower = lx + 177
+    right_tower = lx + 417
+    road_left = lx + 28
+    road_right = lx + lw - 28
+    gap_left = lx + 267
+    gap_right = lx + 327
+
+    # Water beneath the broken span.
+    for y, start, end in (
+        (ly + 268, lx + 214, lx + 380),
+        (ly + 278, lx + 238, lx + 356),
+    ):
+        points = []
+        for x in range(start, end + 1, 8):
+            points.append((x, y + (4 if ((x - start) // 8) % 2 else 0)))
+        draw.line(points, fill=BLUE, width=5, joint="curve")
+
+    # Two tall pylons with fan cables on either side.
+    for tower_x in (left_tower, right_tower):
+        draw.line((tower_x, tower_top, tower_x, deck_y), fill=INK, width=9)
+        draw.line((tower_x - 17, tower_top, tower_x + 17, tower_top), fill=INK, width=8)
+        draw.line((tower_x - 15, deck_y - 8, tower_x + 15, deck_y - 8), fill=INK, width=7)
+    for x in (road_left, lx + 104, lx + 143, left_tower, lx + 231, gap_left):
+        draw.line((left_tower, tower_top, x, deck_y - 4), fill=INK, width=4)
+    for x in (gap_right, lx + 377, right_tower, lx + 457, lx + 497, road_right):
+        draw.line((right_tower, tower_top, x, deck_y - 4), fill=INK, width=4)
+
+    # Roadway, split at the failed span; both broken ends pitch into the water.
+    draw.polygon(
+        [(road_left, deck_y - 5), (gap_left - 14, deck_y - 5),
+         (gap_left + 1, deck_y + 7), (gap_left + 26, deck_y + 28),
+         (gap_left + 18, deck_y + 33), (gap_left - 9, deck_y + 13),
+         (gap_left - 27, deck_y + 5), (road_left, deck_y + 5)],
+        fill=INK,
+    )
+    draw.polygon(
+        [(gap_right + 14, deck_y - 5), (road_right, deck_y - 5),
+         (road_right, deck_y + 5), (gap_right + 27, deck_y + 5),
+         (gap_right + 9, deck_y + 13), (gap_right - 18, deck_y + 33),
+         (gap_right - 26, deck_y + 28), (gap_right - 1, deck_y + 7)],
+        fill=INK,
+    )
+    draw.line(
+        (gap_left + 10, deck_y + 3, gap_right - 9, deck_y + 18),
+        fill=RED,
+        width=7,
+    )
+    draw.text((lx + 35, ly + 110), "BLACK SEA", font=font(BOLD, 17), fill=BLUE)
+    draw.text((lx + lw - 150, ly + 110), "CRIMEA", font=font(BOLD, 17), fill=BLUE)
 
     # Lead copy
     text_block(draw, (lx + 22, ly + 288),
